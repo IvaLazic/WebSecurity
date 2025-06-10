@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Protected Route</title>
+</head>
+<body>
+  <h2>Test Protected /posts Route</h2>
+  <button id="load-posts">Load Posts</button>
+  <pre id="output"></pre>
+
+    <script src="authFetch.js"></script>
+    <script>
+    document.getElementById('load-posts').addEventListener('click', async () => {
+        try {
+        const response = await authFetch('https://localhost:3000/posts');
+        const data = await response.json();
+        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+        document.getElementById('output').textContent = 'Error: ' + err.message;
+        }
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Post</title>
+</head>
+<body>
+  <h2>Create a Post</h2>
+  <form id="post-form">
+    <input type="text" id="title" placeholder="Title" required><br>
+    <textarea id="content" placeholder="Content" rows="4" cols="30" required></textarea><br>
+    <button type="submit">Create Post</button>
+  </form>
+  <p id="message"></p>
+
+  <script src="authFetch.js"></script>
+  <script>
+    document.getElementById('post-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+
+      try {
+        const res = await authFetch('https://localhost:3000/posts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ title, content })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          document.getElementById('message').textContent = result.message;
+          document.getElementById('message').style.color = 'green';
+        } else {
+          document.getElementById('message').textContent = result.message || 'Error';
+          document.getElementById('message').style.color = 'red';
+        }
+      } catch (err) {
+        document.getElementById('message').textContent = 'Error: ' + err.message;
+        document.getElementById('message').style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>

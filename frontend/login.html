@@ -1,0 +1,75 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    #message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Login</h2>
+  <form id="login-form">
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button type="submit">Login</button>
+  </form>
+  <p id="message"></p>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('https://localhost:3000/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const result = await response.json();
+        const msg = document.getElementById('message');
+
+        if (response.ok) {
+          msg.textContent = result.message || 'Login successful!';
+          msg.style.color = 'green';
+
+          // ✅ Store tokens
+          localStorage.setItem('accessToken', result.accessToken);
+          localStorage.setItem('refreshToken', result.refreshToken);
+
+          // ✅ Log them in console for dev/test
+          console.log('Access token:', result.accessToken);
+          console.log('Refresh token:', result.refreshToken);
+        } else {
+          msg.textContent = result.error?.message || result.errors?.[0]?.msg || 'Login failed.';
+          msg.style.color = 'red';
+        }
+      } catch (err) {
+        document.getElementById('message').textContent = 'Server connection error.';
+        document.getElementById('message').style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>

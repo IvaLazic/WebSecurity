@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View My Posts</title>
+</head>
+<body>
+  <h2>My Posts</h2>
+  <button id="load-posts">Load Posts</button>
+  <ul id="post-list"></ul>
+
+  <script src="authFetch.js"></script>
+  <script>
+    document.getElementById('load-posts').addEventListener('click', async () => {
+      try {
+        const res = await authFetch('https://localhost:3000/posts');
+        const data = await res.json();
+
+        const postList = document.getElementById('post-list');
+        postList.innerHTML = '';
+
+        if (data.posts && data.posts.length > 0) {
+          data.posts.forEach(post => {
+            const li = document.createElement('li');
+            li.textContent = `${post.title}: ${post.content}`;
+            postList.appendChild(li);
+          });
+        } else {
+          postList.innerHTML = '<li>No posts found.</li>';
+        }
+      } catch (err) {
+        document.getElementById('post-list').innerHTML = `<li>Error: ${err.message}</li>`;
+      }
+    });
+  </script>
+</body>
+</html>
